@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NYC ASP TODAY</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Bebas+Neue&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --yellow: #FFE500;
+    --black: #0A0A0A;
+    --white: #F5F4EF;
+    --red: #E8001A;
+    --green: #00A651;
+    --mid: #888;
+    --border: 3px solid var(--black);
+  }
+
+  html, body {
+    height: 100%;
+    background: var(--white);
+    color: var(--black);
+    font-family: 'DM Mono', monospace;
+  }
+
+  body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 20px;
+  }
+
+  .container {
+    width: 100%;
+    max-width: 480px;
+  }
+
+  /* Header */
+  .header {
+    border: var(--border);
+    border-bottom: none;
+    padding: 12px 18px 10px;
+    background: var(--black);
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+  }
+
+  .header-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 13px;
+    letter-spacing: 0.15em;
+    color: var(--yellow);
+  }
+
+  .header-sub {
+    font-size: 9px;
+    color: var(--mid);
+    letter-spacing: 0.1em;
+  }
+
+  /* Main status block */
+  .status-block {
+    border: var(--border);
+    padding: 36px 24px 32px;
+    text-align: center;
+    position: relative;
+    transition: background 0.25s ease;
+  }
+
+  .status-block.suspended {
+    background: var(--green);
+  }
+
+  .status-block.in-effect {
+    background: var(--red);
+  }
+
+  .status-label {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(52px, 18vw, 96px);
+    line-height: 0.9;
+    letter-spacing: 0.02em;
+    color: var(--white);
+    text-shadow: 4px 4px 0 rgba(0,0,0,0.25);
+  }
+
+  .status-sub {
+    margin-top: 10px;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    color: rgba(255,255,255,0.85);
+    text-transform: uppercase;
+  }
+
+  .reason-tag {
+    display: inline-block;
+    margin-top: 14px;
+    padding: 4px 10px;
+    background: rgba(0,0,0,0.2);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    color: var(--white);
+    border-radius: 2px;
+  }
+
+  /* Date row */
+  .date-row {
+    border: var(--border);
+    border-top: none;
+    border-bottom: none;
+    padding: 10px 18px;
+    background: var(--yellow);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .date-text {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--black);
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  /* Next / upcoming */
+  .next-block {
+    border: var(--border);
+    border-top: none;
+    padding: 14px 18px;
+    background: var(--white);
+  }
+
+  .next-label {
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--mid);
+    margin-bottom: 8px;
+  }
+
+  .next-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .next-list li {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    letter-spacing: 0.04em;
+    padding-bottom: 5px;
+    border-bottom: 1px solid #E0DFDA;
+  }
+
+  .next-list li:last-child { border-bottom: none; padding-bottom: 0; }
+
+  .next-date { font-weight: 500; }
+  .next-reason { color: var(--mid); font-size: 10px; }
+
+  /* Calendar button */
+  .cal-block {
+    border: var(--border);
+    border-top: none;
+    padding: 14px 18px;
+    background: var(--black);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .cal-text {
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    color: #888;
+    line-height: 1.5;
+    max-width: 200px;
+  }
+
+  .cal-btn {
+    flex-shrink: 0;
+    background: var(--yellow);
+    color: var(--black);
+    border: none;
+    cursor: pointer;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 15px;
+    letter-spacing: 0.1em;
+    padding: 10px 18px;
+    transition: transform 0.1s, background 0.1s;
+    white-space: nowrap;
+  }
+
+  .cal-btn:hover { background: #fff; transform: translateY(-1px); }
+  .cal-btn:active { transform: translateY(0); }
+
+  /* Footer */
+  .footer {
+    border: var(--border);
+    border-top: none;
+    padding: 8px 18px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--white);
+  }
+
+  .footer-note {
+    font-size: 9px;
+    color: var(--mid);
+    letter-spacing: 0.08em;
+  }
+
+  .footer-link {
+    font-size: 9px;
+    color: var(--mid);
+    letter-spacing: 0.08em;
+    text-decoration: none;
+  }
+  .footer-link:hover { color: var(--black); }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header">
+    <span class="header-title">NYC ASP TODAY</span>
+    <span class="header-sub">(MOVE YOUR CAR)</span>
+  </div>
+
+  <div class="status-block" id="statusBlock">
+    <div class="status-label" id="statusLabel">—</div>
+    <div class="status-sub" id="statusSub"></div>
+    <div class="reason-tag" id="reasonTag" style="display:none"></div>
+  </div>
+
+  <div class="date-row">
+    <span class="date-text" id="dateText"></span>
+    <span class="dot"></span>
+  </div>
+
+  <div class="next-block">
+    <div class="next-label">Upcoming Suspensions</div>
+    <ul class="next-list" id="nextList"></ul>
+  </div>
+
+  <div class="cal-block">
+    <div class="cal-text">IMPORT ALL 2026<br>SUSPENSION DAYS TO CALENDAR</div>
+    <button class="cal-btn" id="calBtn">↓ .ICS FILE</button>
+  </div>
+
+  <div class="footer">
+    <span class="footer-note">Source: NYC DOT 2026</span>
+    <a class="footer-link" href="https://www.nyc.gov/html/dot/html/motorist/alternate-side-parking.shtml" target="_blank">nyc.gov/dot ↗</a>
+  </div>
+</div>
+
+<script>
+// 2026 ASP Suspension Calendar — all confirmed dates from NYC DOT
+const SUSPENSIONS_2026 = [
+  { date: "2026-01-01", reason: "New Year's Day", major: true },
+  { date: "2026-01-06", reason: "Three Kings' Day" },
+  { date: "2026-01-19", reason: "Martin Luther King Jr. Day", major: true },
+  { date: "2026-02-12", reason: "Lincoln's Birthday" },
+  { date: "2026-02-16", reason: "Washington's Birthday / Lunar New Year's Eve", major: true },
+  { date: "2026-02-17", reason: "Lunar New Year" },
+  { date: "2026-02-18", reason: "Ash Wednesday / Losar" },
+  { date: "2026-04-03", reason: "Good Friday" },
+  { date: "2026-04-08", reason: "Passover (7th day)" },
+  { date: "2026-04-09", reason: "Passover (8th day)" },
+  { date: "2026-04-16", reason: "Orthodox Holy Thursday" },
+  { date: "2026-04-17", reason: "Good Friday (Orthodox)" },
+  { date: "2026-05-14", reason: "Solemnity of the Ascension" },
+  { date: "2026-05-22", reason: "Shavuoth" },
+  { date: "2026-05-23", reason: "Shavuoth" },
+  { date: "2026-05-25", reason: "Memorial Day", major: true },
+  { date: "2026-05-27", reason: "Eid al-Adha" },
+  { date: "2026-05-28", reason: "Eid al-Adha" },
+  { date: "2026-06-19", reason: "Juneteenth", major: true },
+  { date: "2026-07-03", reason: "Independence Day (observed)" },
+  { date: "2026-07-04", reason: "Independence Day", major: true },
+  { date: "2026-07-23", reason: "Tisha B'Av" },
+  { date: "2026-08-15", reason: "Feast of the Assumption" },
+  { date: "2026-09-07", reason: "Labor Day", major: true },
+  { date: "2026-09-12", reason: "Rosh Hashanah" },
+  { date: "2026-09-13", reason: "Rosh Hashanah" },
+  { date: "2026-09-21", reason: "Yom Kippur" },
+  { date: "2026-09-26", reason: "Sukkot" },
+  { date: "2026-09-27", reason: "Sukkot" },
+  { date: "2026-10-03", reason: "Shemini Atzeret" },
+  { date: "2026-10-04", reason: "Simchas Torah" },
+  { date: "2026-10-08", reason: "Diwali" },
+  { date: "2026-10-12", reason: "Italian Heritage/Indigenous Peoples' Day", major: true },
+  { date: "2026-11-03", reason: "Election Day" },
+  { date: "2026-11-11", reason: "Veterans Day", major: true },
+  { date: "2026-11-26", reason: "Thanksgiving Day", major: true },
+  { date: "2026-12-25", reason: "Christmas Day", major: true },
+];
+
+// Normalize to YYYY-MM-DD in local time
+function toLocalDateStr(d) {
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${day}`;
+}
+
+function findSuspension(dateStr) {
+  return SUSPENSIONS_2026.find(s => s.date === dateStr) || null;
+}
+
+function formatDateDisplay(dateStr) {
+  const [y, m, d] = dateStr.split('-').map(Number);
+  const dt = new Date(y, m - 1, d);
+  return dt.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+}
+
+function formatDateShort(dateStr) {
+  const [y, m, d] = dateStr.split('-').map(Number);
+  const dt = new Date(y, m - 1, d);
+  return dt.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+}
+
+function render() {
+  const now = new Date();
+  const todayStr = toLocalDateStr(now);
+
+  document.getElementById('dateText').textContent = formatDateDisplay(todayStr);
+
+  const suspension = findSuspension(todayStr);
+  const block = document.getElementById('statusBlock');
+  const label = document.getElementById('statusLabel');
+  const sub = document.getElementById('statusSub');
+  const tag = document.getElementById('reasonTag');
+
+  if (suspension) {
+    block.className = 'status-block suspended';
+    label.textContent = 'SUSPENDED';
+    sub.textContent = 'No need to move your car today';
+    tag.textContent = suspension.reason.toUpperCase();
+    tag.style.display = 'inline-block';
+  } else {
+    block.className = 'status-block in-effect';
+    label.textContent = 'IN EFFECT';
+    sub.textContent = 'Check your block\'s posted hours';
+    tag.style.display = 'none';
+  }
+
+  // Next upcoming suspensions (from today, up to 5)
+  const upcoming = SUSPENSIONS_2026
+    .filter(s => s.date >= todayStr && s.date !== todayStr)
+    .slice(0, 5);
+
+  const list = document.getElementById('nextList');
+  list.innerHTML = '';
+  if (upcoming.length === 0) {
+    list.innerHTML = '<li><span class="next-date">No more suspensions this year</span></li>';
+  } else {
+    upcoming.forEach(s => {
+      const li = document.createElement('li');
+      li.innerHTML = `<span class="next-date">${formatDateShort(s.date)}</span><span class="next-reason">${s.reason}</span>`;
+      list.appendChild(li);
+    });
+  }
+}
+
+// ICS generation
+function generateICS() {
+  const lines = [
+    'BEGIN:VCALENDAR',
+    'VERSION:2.0',
+    'PRODID:-//NYC ASP Today//2026 Suspension Calendar//EN',
+    'CALSCALE:GREGORIAN',
+    'METHOD:PUBLISH',
+    'X-WR-CALNAME:NYC ASP Suspensions 2026',
+    'X-WR-CALDESC:NYC Alternate Side Parking Suspension Days 2026 (NYC DOT)',
+  ];
+
+  SUSPENSIONS_2026.forEach(s => {
+    const [y, m, d] = s.date.split('-').map(Number);
+    const dateVal = `${y}${String(m).padStart(2,'0')}${String(d).padStart(2,'0')}`;
+    // all-day: DTEND is next day
+    const nextDay = new Date(y, m - 1, d + 1);
+    const endVal = `${nextDay.getFullYear()}${String(nextDay.getMonth()+1).padStart(2,'0')}${String(nextDay.getDate()).padStart(2,'0')}`;
+    const uid = `asp-2026-${s.date.replace(/-/g,'')}@nycasptoday`;
+    lines.push(
+      'BEGIN:VEVENT',
+      `UID:${uid}`,
+      `DTSTART;VALUE=DATE:${dateVal}`,
+      `DTEND;VALUE=DATE:${endVal}`,
+      `SUMMARY:🅿️ ASP SUSPENDED — ${s.reason}`,
+      `DESCRIPTION:Alternate Side Parking is suspended today in NYC for ${s.reason}. No need to move your car for street cleaning. Note: parking meter rules may still apply. Source: nyc.gov/dot`,
+      'CATEGORIES:NYC,PARKING',
+      'END:VEVENT',
+    );
+  });
+
+  lines.push('END:VCALENDAR');
+  return lines.join('\r\n');
+}
+
+document.getElementById('calBtn').addEventListener('click', () => {
+  const ics = generateICS();
+  const blob = new Blob([ics], { type: 'text/calendar;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'nyc-asp-suspensions-2026.ics';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+});
+
+render();
+</script>
+</body>
+</html>
