@@ -278,19 +278,24 @@
 
 <script>
 // 2026 ASP Suspension Calendar — all confirmed dates from NYC DOT
+// Source: NYC DOT official 2026 ASP Suspension Calendar
+// https://www.nyc.gov/html/dot/html/motorist/alternate-side-parking.shtml
 const SUSPENSIONS_2026 = [
   { date: "2026-01-01", reason: "New Year's Day", major: true },
   { date: "2026-01-06", reason: "Three Kings' Day" },
-  { date: "2026-01-19", reason: "Martin Luther King Jr. Day", major: true },
+  { date: "2026-01-19", reason: "Martin Luther King Jr.'s Birthday", major: true },
   { date: "2026-02-12", reason: "Lincoln's Birthday" },
   { date: "2026-02-16", reason: "Washington's Birthday / Lunar New Year's Eve", major: true },
   { date: "2026-02-17", reason: "Lunar New Year" },
   { date: "2026-02-18", reason: "Ash Wednesday / Losar" },
-  { date: "2026-04-03", reason: "Good Friday" },
-  { date: "2026-04-08", reason: "Passover (7th day)" },
-  { date: "2026-04-09", reason: "Passover (8th day)" },
-  { date: "2026-04-16", reason: "Orthodox Holy Thursday" },
-  { date: "2026-04-17", reason: "Good Friday (Orthodox)" },
+  { date: "2026-03-03", reason: "Purim" },
+  { date: "2026-03-20", reason: "Eid al-Fitr" },
+  { date: "2026-03-21", reason: "Eid al-Fitr" },
+  { date: "2026-04-02", reason: "Holy Thursday / Passover" },
+  { date: "2026-04-03", reason: "Good Friday / Passover" },
+  { date: "2026-04-08", reason: "Passover (7th/8th Days)" },
+  { date: "2026-04-09", reason: "Passover (7th/8th Days) / Holy Thursday (Orthodox)" },
+  { date: "2026-04-10", reason: "Good Friday (Orthodox)" },
   { date: "2026-05-14", reason: "Solemnity of the Ascension" },
   { date: "2026-05-22", reason: "Shavuoth" },
   { date: "2026-05-23", reason: "Shavuoth" },
@@ -298,7 +303,7 @@ const SUSPENSIONS_2026 = [
   { date: "2026-05-27", reason: "Eid al-Adha" },
   { date: "2026-05-28", reason: "Eid al-Adha" },
   { date: "2026-06-19", reason: "Juneteenth", major: true },
-  { date: "2026-07-03", reason: "Independence Day (observed)" },
+  { date: "2026-07-03", reason: "Independence Day (observed)", major: true },
   { date: "2026-07-04", reason: "Independence Day", major: true },
   { date: "2026-07-23", reason: "Tisha B'Av" },
   { date: "2026-08-15", reason: "Feast of the Assumption" },
@@ -310,11 +315,13 @@ const SUSPENSIONS_2026 = [
   { date: "2026-09-27", reason: "Sukkot" },
   { date: "2026-10-03", reason: "Shemini Atzeret" },
   { date: "2026-10-04", reason: "Simchas Torah" },
-  { date: "2026-10-08", reason: "Diwali" },
-  { date: "2026-10-12", reason: "Italian Heritage/Indigenous Peoples' Day", major: true },
+  { date: "2026-10-12", reason: "Columbus Day", major: true },
+  { date: "2026-11-01", reason: "All Saints' Day" },
   { date: "2026-11-03", reason: "Election Day" },
+  { date: "2026-11-08", reason: "Diwali" },
   { date: "2026-11-11", reason: "Veterans Day", major: true },
   { date: "2026-11-26", reason: "Thanksgiving Day", major: true },
+  { date: "2026-12-08", reason: "Immaculate Conception" },
   { date: "2026-12-25", reason: "Christmas Day", major: true },
 ];
 
